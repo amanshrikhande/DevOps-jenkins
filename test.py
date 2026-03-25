@@ -1,7 +1,6 @@
 """
 test.py — Selenium Test Suite for Symbiosis Admission Registration Form
 """
-
 import os
 import time
 
@@ -9,12 +8,15 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.options import Options
-
+from selenium.webdriver.chrome.service import Service   # ← add this
 
 # ── Setup ─────────────────────────────────────────────────────────────────────
 
-FILE_PATH = os.path.abspath("index.html")
-URL = "file://" + FILE_PATH
+FILE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "index.html")
+URL = "file:///" + FILE_PATH.replace("\\", "/")
+
+# ← Point directly to chromedriver.exe in your project folder
+DRIVER_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "chromedriver.exe")
 
 def create_driver():
     options = Options()
@@ -22,7 +24,9 @@ def create_driver():
     options.add_argument("--headless")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    driver = webdriver.Chrome(options=options)
+    options.add_argument("--disable-gpu")
+    service = Service(DRIVER_PATH)              # ← add this
+    driver = webdriver.Chrome(service=service, options=options)  # ← update this
     driver.implicitly_wait(3)
     return driver
 
